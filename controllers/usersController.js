@@ -6,24 +6,26 @@ const { UserSchema } = require('../models/userModel');
 
 const User = mongoose.model('User', UserSchema);
 
-// const User = require("../models/userModel");
 
-const addnewUser = (req, res) => {
-    console.log(req.body);
+const addnewUser = (req, res, callback) => {
     let newUser = new User(req.body);
-
-    newUser.save((err, user) => {
+    console.log(req.body);
+    console.log(newUser);
+    let username = req.body.userName;
+    let password = req.body.password;
+    if (!username || !password) {
+      res.json({ msg: 'username and password is required!' })
+    } else {
+      const dirPath = path.join(__dirname, `../drive/${username}`,);
+      console.log(dirPath)
+      fs.mkdir(dirPath, (err) => {
         if (err) {
-            res.send(err);
+          res.json({ msg: 'username has been taken' });
+        } else {
+          newUser.save(callback);
         }
-        const dirPath = path.join(__dirname, `..drive/${req.body.userName}`);
-        (!fs.exists(dirPath) || req.body.userName)?fs.mkdir(dirPath, (err) => {
-                  if (err) {
-                    res.json({ msg: 'username has been taken' });
-                  }
-                }):res.send('User exists');
-        return res.json(user);
-    });
-}
+      });
+    }
+  }
 
 module.exports = addnewUser;
