@@ -9,9 +9,12 @@ const User = mongoose.model('User', UserSchema);
 
 const addnewUser = (req, res, callback) => {
     let newUser = new User(req.body);
-    console.log(req.body);
-    console.log(newUser);
-    let username = req.body.userName;
+
+    newUser.save((err, user) => {
+        if (err) {
+            res.send(err);
+        }
+        let username = req.body.userName;
     let password = req.body.password;
     if (!username || !password) {
       res.json({ msg: 'username and password is required!' })
@@ -20,12 +23,12 @@ const addnewUser = (req, res, callback) => {
       console.log(dirPath)
       fs.mkdir(dirPath, (err) => {
         if (err) {
-          res.json({ msg: 'username has been taken' });
-        } else {
-          newUser.save(callback);
+          res.json({ msg: 'error' });
         }
       });
-    }
-  }
+        res.json(user);
+    };
+  })
+}
 
 module.exports = addnewUser;
