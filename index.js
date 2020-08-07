@@ -25,6 +25,12 @@ app.get('/', (req, res) =>
     res.send(`Node and express server running on port ${PORT}`)
 );
 
+// Handle non existing route with proper message
+app.all('*', (req, res) => res.status(404).json({
+    status: 404,
+    error: 'Route does not exist',
+  }));
+
 app.listen(PORT, () => 
     console.log(`Your server is running on port ${PORT}`)
 );
